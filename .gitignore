@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+venv/
+.env
+backend/.env
+backend/.envecho
+backend/fix_agents.py
+backend/agents.py.bak
+*.log
