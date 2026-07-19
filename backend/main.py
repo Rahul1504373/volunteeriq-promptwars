@@ -55,7 +55,7 @@ from typing import Optional
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, Field
 
 from agents import (
     AccessibilityRouterAgent,
@@ -153,7 +153,7 @@ app.add_middleware(
 class AskRequest(BaseModel):
     """Request body for the /ask endpoint."""
 
-    fan_query: str = Field(
+    fan_query: str = Field(..., min_length=1, max_length=500) = Field(
         ...,
         min_length=1,
         max_length=2000,
@@ -185,7 +185,7 @@ class CrowdRequest(BaseModel):
 class AccessibilityRequest(BaseModel):
     """Request body for the /accessibility endpoint."""
 
-    fan_query: str = Field(
+    fan_query: str = Field(..., min_length=1, max_length=500) = Field(
         ...,
         min_length=1,
         max_length=2000,
