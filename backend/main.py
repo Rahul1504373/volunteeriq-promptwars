@@ -130,6 +130,11 @@ def _log_to_firestore(collection: str, data: dict) -> None:
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 app = FastAPI(
+    title="VolunteerIQ — FIFA World Cup 2026",
+    description="AI-powered multilingual assistant for stadium volunteers. Covers navigation, crowd intelligence, accessibility routing and shift briefings in 8 languages.",
+    version="1.0.0",
+    docs_url="/docs",
+    redoc_url="/redoc",
     title="VolunteerIQ API",
     description="AI-powered multilingual assistant for FIFA World Cup 2026 stadium volunteers.",
     version="1.0.0",
