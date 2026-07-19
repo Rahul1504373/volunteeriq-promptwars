@@ -1,0 +1,1974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="VolunteerIQ — AI-powered multilingual assistant for FIFA World Cup 2026 stadium volunteers. Every language. Every decision. Instant." />
+  <meta name="keywords" content="FIFA World Cup 2026, stadium volunteer, AI assistant, multilingual, MetLife Stadium, accessibility" />
+  <meta property="og:title" content="VolunteerIQ — FIFA World Cup 2026" />
+  <meta property="og:description" content="Every volunteer. Every language. Every decision. Instant." />
+  <title>VolunteerIQ — FIFA World Cup 2026 Smart Stadium</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <style>
+    /* ─── CSS RESET & TOKENS ────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --fifa-blue:    #003DA5;
+      --fifa-blue-lt: #1a54c7;
+      --fifa-red:     #C8102E;
+      --gold:         #FFD700;
+      --gold-dk:      #e6c200;
+      --dark:         #0d1117;
+      --dark-card:    #161b22;
+      --dark-border:  #30363d;
+      --surface:      #f0f4f9;
+      --card:         #ffffff;
+      --success:      #28a745;
+      --warning:      #ffc107;
+      --danger:       #dc3545;
+      --critical:     #6f0000;
+      --critical-lt:  #b30000;
+      --text-primary: #1a1a2e;
+      --text-muted:   #6c757d;
+      --radius:       12px;
+      --radius-sm:    8px;
+      --shadow:       0 4px 24px rgba(0,0,0,0.08);
+      --shadow-lg:    0 8px 40px rgba(0,0,0,0.16);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--surface);
+      color: var(--text-primary);
+      min-height: 100vh;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    /* ─── ANIMATIONS ────────────────────────────────────────── */
+    @keyframes pulse-ring {
+      0%   { box-shadow: 0 0 0 0 rgba(220,53,69,0.6); }
+      70%  { box-shadow: 0 0 0 10px rgba(220,53,69,0); }
+      100% { box-shadow: 0 0 0 0 rgba(220,53,69,0); }
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.4; }
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes slide-up {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fade-in {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+    @keyframes glow-gold {
+      0%, 100% { box-shadow: 0 0 8px rgba(255,215,0,0.4); }
+      50%       { box-shadow: 0 0 20px rgba(255,215,0,0.8); }
+    }
+
+    /* ─── NAVBAR ─────────────────────────────────────────────── */
+    #navbar {
+      background: linear-gradient(135deg, var(--fifa-blue) 0%, var(--fifa-red) 100%);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+    }
+    .navbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .nav-brand {
+      font-size: 20px;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .nav-center {
+      font-size: 13px;
+      color: rgba(255,255,255,0.85);
+      font-weight: 500;
+      text-align: center;
+    }
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+      color: #fff;
+    }
+    #live-clock { font-weight: 600; font-variant-numeric: tabular-nums; }
+    .live-badge {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 20px;
+      padding: 4px 10px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .live-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #4ade80;
+      animation: pulse-dot 1.4s ease-in-out infinite;
+    }
+
+    /* ─── CONTROL BAR (gate + match) ─────────────────────────── */
+    #control-bar {
+      background: var(--card);
+      border-bottom: 1px solid #e2e8f0;
+      position: sticky;
+      top: 53px;
+      z-index: 900;
+      box-shadow: var(--shadow);
+    }
+    .control-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 10px 20px;
+    }
+
+    /* Gate selector */
+    .gate-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+    .gate-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      white-space: nowrap;
+    }
+    .gate-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+    .gate-btn {
+      border: 2px solid transparent;
+      border-radius: var(--radius-sm);
+      padding: 6px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: var(--surface);
+      color: var(--text-primary);
+    }
+    .gate-btn:hover { transform: translateY(-1px); box-shadow: var(--shadow); }
+    .gate-btn.active { background: var(--fifa-blue); color: #fff; border-color: var(--fifa-blue); }
+    .gate-btn.density-critical { border-color: var(--danger); color: var(--danger); }
+    .gate-btn.density-critical.active { background: var(--danger); color: #fff; border-color: var(--danger); animation: pulse-ring 1.5s infinite; }
+    .gate-btn.density-high { border-color: var(--warning); color: #856404; }
+    .gate-btn.density-moderate { border-color: #fd7e14; color: #7c3a00; }
+
+    /* Match selector */
+    .match-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .match-pill {
+      border: 2px solid #e2e8f0;
+      border-radius: 20px;
+      padding: 5px 14px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: var(--surface);
+    }
+    .match-pill:hover { border-color: var(--gold); box-shadow: 0 2px 8px rgba(255,215,0,0.3); }
+    .match-pill.active { border-color: var(--gold); background: #fffbeb; animation: glow-gold 2s ease-in-out infinite; font-weight: 700; }
+
+    /* ─── TABS ───────────────────────────────────────────────── */
+    #tab-nav {
+      background: var(--card);
+      border-bottom: 2px solid #e2e8f0;
+      position: sticky;
+      top: 117px;
+      z-index: 800;
+    }
+    .tab-nav-inner {
+      display: flex;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 14px 8px;
+      border: none;
+      background: transparent;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s ease;
+      font-family: 'Inter', sans-serif;
+      white-space: nowrap;
+    }
+    .tab-btn:hover { color: var(--fifa-blue); background: rgba(0,61,165,0.04); }
+    .tab-btn.active { color: var(--fifa-blue); border-bottom-color: var(--fifa-blue); background: rgba(0,61,165,0.06); }
+
+    /* ─── TAB PANELS ─────────────────────────────────────────── */
+    .tab-panel { display: none; max-width: 1200px; margin: 0 auto; padding: 24px 20px; }
+    .tab-panel.active { display: block; animation: fade-in 0.3s ease; }
+
+    /* ─── SHARED CARD ────────────────────────────────────────── */
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    /* ─── SECTION HEADING ────────────────────────────────────── */
+    .section-heading {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+    .section-sub {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+
+    /* ─── TAB 1: ASK FOR FAN ─────────────────────────────────── */
+    .demo-scenarios {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .demo-btn {
+      border: 1.5px solid #e2e8f0;
+      border-radius: 20px;
+      padding: 7px 14px;
+      font-size: 13px;
+      cursor: pointer;
+      background: var(--surface);
+      transition: all 0.2s ease;
+      font-family: 'Inter', sans-serif;
+    }
+    .demo-btn:hover {
+      border-color: var(--fifa-blue);
+      background: rgba(0,61,165,0.06);
+      transform: translateY(-1px);
+    }
+
+    #fan-query-input {
+      width: 100%;
+      border: 2px solid #e2e8f0;
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+      font-size: 16px;
+      font-family: 'Inter', sans-serif;
+      resize: vertical;
+      transition: border-color 0.2s ease;
+      outline: none;
+      min-height: 100px;
+    }
+    #fan-query-input:focus { border-color: var(--fifa-blue); box-shadow: 0 0 0 3px rgba(0,61,165,0.12); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--fifa-blue), var(--fifa-blue-lt));
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 14px 28px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: 'Inter', sans-serif;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,61,165,0.35); }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    .btn-secondary {
+      background: var(--surface);
+      color: var(--text-primary);
+      border: 2px solid #e2e8f0;
+      border-radius: var(--radius-sm);
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: 'Inter', sans-serif;
+    }
+    .btn-secondary:hover { border-color: var(--fifa-blue); color: var(--fifa-blue); }
+
+    .loading-state {
+      display: none;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 0;
+      color: var(--fifa-blue);
+      font-weight: 600;
+    }
+    .loading-state.visible { display: flex; }
+    .spinner {
+      font-size: 22px;
+      animation: spin 1s linear infinite;
+      display: inline-block;
+    }
+
+    /* Response split panels */
+    #response-card {
+      display: none;
+      animation: slide-up 0.4s ease;
+    }
+    #response-card.visible { display: block; }
+
+    .response-panels {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 700px) { .response-panels { grid-template-columns: 1fr; } }
+
+    .panel-fan {
+      background: #eff6ff;
+      border: 2px solid var(--fifa-blue);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+    .panel-volunteer {
+      background: var(--dark-card);
+      border: 2px solid var(--dark-border);
+      border-radius: var(--radius);
+      padding: 20px;
+      color: #e6edf3;
+    }
+
+    .panel-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .panel-fan .panel-label { color: var(--fifa-blue); }
+    .panel-volunteer .panel-label { color: #8b949e; }
+
+    .lang-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--fifa-blue);
+      color: #fff;
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .fan-response-text {
+      font-size: 18px;
+      line-height: 1.65;
+      color: var(--text-primary);
+      margin-bottom: 14px;
+    }
+
+    .volunteer-summary {
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 14px;
+      color: #cdd9e5;
+    }
+
+    .action-hint {
+      background: var(--gold);
+      color: #1a1a00;
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      font-size: 14px;
+      font-weight: 800;
+      margin-bottom: 10px;
+      letter-spacing: 0.3px;
+    }
+
+    .gate-highlight {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(0,61,165,0.15);
+      color: #7eb8ff;
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .read-aloud-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--fifa-blue);
+      color: #fff;
+      border: none;
+      border-radius: 20px;
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: 'Inter', sans-serif;
+      margin-top: 6px;
+    }
+    .read-aloud-btn:hover { background: var(--fifa-blue-lt); transform: translateY(-1px); }
+
+    /* Alert banners */
+    .banner {
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+      font-size: 15px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .banner-emergency {
+      background: linear-gradient(135deg, #6f0000, var(--danger));
+      color: #fff;
+      animation: pulse-ring 1.5s infinite;
+      font-size: 16px;
+    }
+    .banner-accessibility { background: #dbeafe; color: var(--fifa-blue); border: 2px solid var(--fifa-blue); }
+    .banner-supervisor { background: #fff3cd; color: #7c4a00; border: 2px solid var(--warning); }
+    .banner-ext { font-size: 22px; font-weight: 900; margin-left: auto; }
+
+    /* ─── TAB 2: CROWD INTEL ──────────────────────────────────── */
+    .crowd-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .countdown-badge {
+      background: var(--surface);
+      border: 2px solid var(--fifa-blue);
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--fifa-blue);
+    }
+
+    .gate-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .gate-card {
+      background: var(--card);
+      border: 2px solid #e2e8f0;
+      border-radius: var(--radius);
+      padding: 18px;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow);
+    }
+    .gate-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+    .gate-card.critical { border-color: var(--danger); animation: pulse-ring 2s infinite; }
+    .gate-card.high { border-color: var(--warning); }
+    .gate-card.moderate { border-color: #fd7e14; }
+    .gate-card.available { border-color: var(--success); }
+
+    .gate-card-name {
+      font-size: 15px;
+      font-weight: 800;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .accessible-icon { font-size: 14px; }
+
+    .capacity-bar-wrap {
+      background: #e9ecef;
+      border-radius: 100px;
+      height: 10px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+    .capacity-bar-fill {
+      height: 100%;
+      border-radius: 100px;
+      transition: width 1s ease;
+    }
+    .fill-green  { background: linear-gradient(90deg, #28a745, #5ece7b); }
+    .fill-yellow { background: linear-gradient(90deg, #ffc107, #ffe066); }
+    .fill-orange { background: linear-gradient(90deg, #fd7e14, #ffb347); }
+    .fill-red    { background: linear-gradient(90deg, var(--critical-lt), var(--danger)); }
+
+    .gate-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .status-badge {
+      display: inline-block;
+      border-radius: 20px;
+      padding: 3px 10px;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+    .badge-available { background: #d1fae5; color: #065f46; }
+    .badge-moderate  { background: #fed7aa; color: #7c2d12; }
+    .badge-high      { background: #fef9c3; color: #78350f; }
+    .badge-critical  { background: #fee2e2; color: #7f1d1d; }
+
+    /* AI Reasoning Panel */
+    .reasoning-panel {
+      background: var(--dark-card);
+      border: 1.5px solid var(--dark-border);
+      border-radius: var(--radius);
+      padding: 24px;
+      color: #e6edf3;
+    }
+    .reasoning-panel h3 {
+      font-size: 16px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .risk-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 6px;
+      padding: 6px 14px;
+      font-size: 14px;
+      font-weight: 800;
+      margin-bottom: 14px;
+    }
+    .risk-Low      { background: #d1fae5; color: #065f46; }
+    .risk-Medium   { background: #fef9c3; color: #78350f; }
+    .risk-High     { background: #fed7aa; color: #7c2d12; }
+    .risk-Critical { background: #fee2e2; color: #7f1d1d; animation: pulse-ring 1.5s infinite; }
+    .risk-Unknown  { background: #e2e8f0; color: #374151; }
+
+    .reasoning-text {
+      font-size: 14px;
+      line-height: 1.7;
+      color: #cdd9e5;
+      margin-bottom: 14px;
+    }
+    .decision-text {
+      color: var(--gold);
+      font-size: 15px;
+      font-weight: 800;
+      margin-bottom: 16px;
+      padding: 10px 14px;
+      background: rgba(255,215,0,0.08);
+      border-left: 3px solid var(--gold);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    }
+
+    .redirect-arrow {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(255,255,255,0.05);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      margin-bottom: 14px;
+      font-size: 15px;
+      font-weight: 700;
+    }
+    .redirect-from { color: var(--danger); }
+    .arrow-icon { font-size: 20px; color: var(--gold); }
+    .redirect-to { color: #4ade80; }
+
+    /* Alert language tabs */
+    .lang-tabs {
+      display: flex;
+      gap: 0;
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      border: 1.5px solid var(--dark-border);
+      margin-bottom: 10px;
+    }
+    .lang-tab-btn {
+      flex: 1;
+      padding: 8px;
+      background: transparent;
+      border: none;
+      color: #8b949e;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      font-family: 'Inter', sans-serif;
+    }
+    .lang-tab-btn.active { background: rgba(255,255,255,0.1); color: #fff; }
+    .lang-tab-btn:hover { background: rgba(255,255,255,0.06); }
+    .alert-text { font-size: 14px; line-height: 1.6; color: #cdd9e5; min-height: 40px; }
+
+    .instruction-box {
+      background: rgba(40,167,69,0.15);
+      border: 1.5px solid var(--success);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      font-size: 14px;
+      color: #86efac;
+      margin-top: 14px;
+    }
+
+    /* ─── TAB 3: ACCESSIBLE ──────────────────────────────────── */
+    .access-type-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    @media (max-width: 500px) { .access-type-grid { grid-template-columns: repeat(2, 1fr); } }
+
+    .access-type-btn {
+      border: 2px solid #e2e8f0;
+      border-radius: var(--radius);
+      padding: 14px 10px;
+      background: var(--surface);
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s ease;
+      font-family: 'Inter', sans-serif;
+    }
+    .access-type-btn:hover { border-color: var(--fifa-blue); transform: translateY(-2px); box-shadow: var(--shadow); }
+    .access-type-btn.active { border-color: var(--fifa-blue); background: rgba(0,61,165,0.08); color: var(--fifa-blue); }
+    .access-type-btn .icon { font-size: 26px; display: block; margin-bottom: 6px; }
+    .access-type-btn .label { font-size: 13px; font-weight: 600; }
+
+    #access-response-card {
+      display: none;
+      animation: slide-up 0.4s ease;
+    }
+    #access-response-card.visible { display: block; }
+
+    .access-type-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--fifa-blue);
+      color: #fff;
+      border-radius: 20px;
+      padding: 6px 16px;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .escort-badge {
+      background: #fef9c3;
+      color: #78350f;
+      border: 1.5px solid var(--warning);
+      border-radius: var(--radius-sm);
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .walk-time {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: var(--text-muted);
+      margin: 8px 0;
+    }
+    .walk-dots { display: flex; gap: 4px; }
+    .walk-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--fifa-blue);
+    }
+
+    /* ─── TAB 4: BRIEFING ────────────────────────────────────── */
+    .briefing-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .briefing-updated {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    .briefing-doc {
+      background: var(--card);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    .briefing-doc-header {
+      background: linear-gradient(135deg, var(--fifa-blue), var(--fifa-red));
+      color: #fff;
+      padding: 16px 24px;
+      font-weight: 800;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .briefing-section {
+      padding: 16px 24px;
+      border-bottom: 1px solid #e2e8f0;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+    .briefing-section:last-child { border-bottom: none; }
+    .briefing-section-label {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+    .bs-gate-status   { border-left: 4px solid var(--fifa-blue); }
+    .bs-gate-status .briefing-section-label { color: var(--fifa-blue); }
+    .bs-crowd-forecast { border-left: 4px solid #fd7e14; }
+    .bs-crowd-forecast .briefing-section-label { color: #c45000; }
+    .bs-languages     { border-left: 4px solid var(--success); }
+    .bs-languages .briefing-section-label { color: #065f46; }
+    .bs-questions     { border-left: 4px solid var(--fifa-red); }
+    .bs-questions .briefing-section-label { color: var(--fifa-red); }
+
+    .warning-box {
+      background: #fffbeb;
+      border: 1.5px solid var(--warning);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      margin: 6px 0;
+      font-size: 14px;
+      color: #78350f;
+    }
+    .danger-box {
+      background: #fef2f2;
+      border: 1.5px solid var(--danger);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      margin: 6px 0;
+      font-size: 14px;
+      color: #7f1d1d;
+    }
+
+    /* Quick Reference Accordion */
+    .accordion { margin-top: 20px; }
+    .accordion-item {
+      background: var(--card);
+      border-radius: var(--radius-sm);
+      box-shadow: var(--shadow);
+      margin-bottom: 8px;
+      overflow: hidden;
+    }
+    .accordion-header {
+      width: 100%;
+      background: var(--card);
+      border: none;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: left;
+      font-family: 'Inter', sans-serif;
+      color: var(--text-primary);
+      transition: background 0.15s ease;
+    }
+    .accordion-header:hover { background: var(--surface); }
+    .accordion-chevron { transition: transform 0.2s ease; font-size: 12px; }
+    .accordion-header.open .accordion-chevron { transform: rotate(180deg); }
+    .accordion-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+      padding: 0 20px;
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--text-muted);
+    }
+    .accordion-body.open { max-height: 400px; padding: 0 20px 16px; }
+    .accordion-body ul { padding-left: 18px; }
+    .accordion-body li { margin-bottom: 4px; }
+
+    /* ─── UTILITIES ──────────────────────────────────────────── */
+    .mt-8  { margin-top: 8px; }
+    .mt-12 { margin-top: 12px; }
+    .mt-16 { margin-top: 16px; }
+    .mb-12 { margin-bottom: 12px; }
+    .row-flex { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .spacer { flex: 1; }
+    .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+    .text-center { text-align: center; }
+    .fw-800 { font-weight: 800; }
+    .color-gold { color: var(--gold-dk); }
+
+    /* ─── SKELETON LOADER ────────────────────────────────────── */
+    @keyframes shimmer {
+      0%   { background-position: -400px 0; }
+      100% { background-position: 400px 0; }
+    }
+    .skeleton {
+      background: linear-gradient(90deg, #e2e8f0 25%, #f0f4f9 50%, #e2e8f0 75%);
+      background-size: 800px 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: 6px;
+      height: 16px;
+      margin-bottom: 8px;
+    }
+    .skeleton.tall { height: 80px; }
+    .skeleton.short { width: 60%; }
+  </style>
+</head>
+
+<body>
+
+<!-- ─── NAVBAR ─────────────────────────────────────────────────── -->
+<nav id="navbar" aria-label="VolunteerIQ main navigation">
+  <div class="navbar-inner">
+    <div class="nav-brand" aria-label="VolunteerIQ home">⚽ VolunteerIQ</div>
+    <div class="nav-center" aria-live="polite">FIFA World Cup 2026 · MetLife Stadium</div>
+    <div class="nav-right">
+      <span id="live-clock" aria-label="Current time" aria-live="polite"></span>
+      <div class="live-badge" role="status" aria-label="System live">
+        <span class="live-dot" aria-hidden="true"></span>
+        LIVE
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ─── CONTROL BAR ───────────────────────────────────────────── -->
+<div id="control-bar" role="navigation" aria-label="Gate and match selection">
+  <div class="control-inner">
+    <!-- Gate selector -->
+    <div class="gate-row" role="group" aria-label="Select your volunteer station">
+      <span class="gate-label" id="gate-selector-label">Your Station:</span>
+      <div class="gate-btns" role="radiogroup" aria-labelledby="gate-selector-label">
+        <button class="gate-btn density-critical" id="btn-gate-a" data-gate="gate_a"
+          role="radio" aria-checked="false" aria-label="Gate A North, 80% capacity, high density">
+          Gate A ↑80%
+        </button>
+        <button class="gate-btn" id="btn-gate-b" data-gate="gate_b"
+          role="radio" aria-checked="false" aria-label="Gate B East, 30% capacity, available">
+          Gate B ▾30%
+        </button>
+        <button class="gate-btn density-critical" id="btn-gate-c" data-gate="gate_c"
+          role="radio" aria-checked="false" aria-label="Gate C South, 96% capacity, critical — red alert">
+          Gate C 🔴 96%
+        </button>
+        <button class="gate-btn" id="btn-gate-d" data-gate="gate_d"
+          role="radio" aria-checked="false" aria-label="Gate D West, 20% capacity, available">
+          Gate D ▾20%
+        </button>
+      </div>
+    </div>
+    <!-- Match selector -->
+    <div class="match-row" role="group" aria-label="Select today's match">
+      <span class="gate-label">Match:</span>
+      <button class="match-pill" id="btn-match-wc01" data-match="WC01"
+        aria-pressed="false" aria-label="Brazil vs Argentina, June 15, World Cup match 1">
+        🇧🇷🇦🇷 Brazil vs Argentina · Jun 15
+      </button>
+      <button class="match-pill" id="btn-match-wc02" data-match="WC02"
+        aria-pressed="false" aria-label="USA vs Mexico, June 20, World Cup match 2">
+        🇺🇸🇲🇽 USA vs Mexico · Jun 20
+      </button>
+      <button class="match-pill" id="btn-match-wc03" data-match="WC03"
+        aria-pressed="false" aria-label="Morocco vs France, June 25, World Cup match 3">
+        🇲🇦🇫🇷 Morocco vs France · Jun 25
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── TAB NAV ───────────────────────────────────────────────── -->
+<div id="tab-nav" role="tablist" aria-label="VolunteerIQ features">
+  <div class="tab-nav-inner">
+    <button class="tab-btn active" id="tab-btn-ask" role="tab" aria-selected="true"
+      aria-controls="tab-ask" data-tab="ask" aria-label="Ask for Fan tab">
+      🎤 Ask for Fan
+    </button>
+    <button class="tab-btn" id="tab-btn-crowd" role="tab" aria-selected="false"
+      aria-controls="tab-crowd" data-tab="crowd" aria-label="Crowd Intelligence tab">
+      📊 Crowd Intel
+    </button>
+    <button class="tab-btn" id="tab-btn-access" role="tab" aria-selected="false"
+      aria-controls="tab-access" data-tab="access" aria-label="Accessibility Assistant tab">
+      ♿ Accessible
+    </button>
+    <button class="tab-btn" id="tab-btn-brief" role="tab" aria-selected="false"
+      aria-controls="tab-brief" data-tab="brief" aria-label="My Briefing tab">
+      📋 My Briefing
+    </button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- TAB 1: ASK FOR FAN                                         -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section class="tab-panel active" id="tab-ask" role="tabpanel" aria-labelledby="tab-btn-ask">
+
+  <div class="card">
+    <h1 class="section-heading">Fan Question Translator</h1>
+    <p class="section-sub">A fan is asking you something. Type what they said — in ANY language. AI detects and translates instantly.</p>
+
+    <!-- Demo scenarios -->
+    <p class="gate-label mb-12">Try a demo scenario:</p>
+    <div class="demo-scenarios" role="group" aria-label="Demo scenarios">
+      <button class="demo-btn" data-query="Onde fica o banheiro?"
+        aria-label="Demo: Portuguese bathroom question">
+        🇧🇷 "Onde fica o banheiro?"
+      </button>
+      <button class="demo-btn" data-query="أين المقعد رقم 215؟"
+        aria-label="Demo: Arabic seat number question">
+        🇲🇦 "أين المقعد رقم 215؟"
+      </button>
+      <button class="demo-btn" data-query="Mujhe vegan khana chahiye"
+        aria-label="Demo: Hindi vegan food question">
+        🇮🇳 "Mujhe vegan khana chahiye"
+      </button>
+      <button class="demo-btn" data-query="I need wheelchair access for my mother"
+        aria-label="Demo: Wheelchair accessibility request">
+        ♿ "I need wheelchair access"
+      </button>
+      <button class="demo-btn" data-query="My child is missing! Please help me!"
+        aria-label="Demo: Lost child emergency">
+        🆘 "My child is missing!"
+      </button>
+    </div>
+
+    <!-- Input -->
+    <label for="fan-query-input" class="gate-label" style="display:block;margin-bottom:8px;">
+      Fan's Question (any language):
+    </label>
+    <textarea
+      id="fan-query-input"
+      rows="4"
+      placeholder="Type or paste what the fan said — in any language..."
+      aria-label="Type the fan's question in any language"
+      aria-required="true"
+    ></textarea>
+
+    <div class="row-flex mt-12">
+      <button class="btn-primary" id="ask-submit-btn"
+        aria-label="Submit fan question to AI translator">
+        Get AI Answer →
+      </button>
+      <button class="btn-secondary" id="ask-clear-btn"
+        aria-label="Clear input field">
+        Clear
+      </button>
+    </div>
+
+    <!-- Loading -->
+    <div class="loading-state" id="ask-loading" role="status" aria-live="polite">
+      <span class="spinner" aria-hidden="true">⚽</span>
+      <span>VolunteerIQ AI is thinking...</span>
+    </div>
+
+    <!-- Error -->
+    <div id="ask-error" role="alert" style="display:none;margin-top:12px;" class="banner banner-supervisor">
+      <span>⚠️</span><span id="ask-error-msg">Unable to get AI response. Please try again.</span>
+    </div>
+  </div>
+
+  <!-- Response card -->
+  <div id="response-card" class="card" aria-live="polite" aria-label="AI response">
+    <!-- Panels -->
+    <div class="response-panels">
+      <!-- LEFT: Fan panel -->
+      <div class="panel-fan">
+        <div class="panel-label">📢 Show this to the fan</div>
+        <div class="lang-badge" id="lang-badge" aria-label="Detected language">
+          <span id="lang-flag" aria-hidden="true">🌐</span>
+          <span id="lang-name">Language detected</span>
+        </div>
+        <div class="fan-response-text" id="fan-response-text" lang="auto" aria-label="Fan response in their language">
+        </div>
+        <button class="read-aloud-btn" id="read-aloud-btn"
+          aria-label="Read the fan response aloud in the detected language">
+          🔊 Read Aloud
+        </button>
+      </div>
+      <!-- RIGHT: Volunteer panel -->
+      <div class="panel-volunteer">
+        <div class="panel-label">🎧 Your English Summary</div>
+        <div class="volunteer-summary" id="volunteer-summary" aria-label="Volunteer summary in English">
+        </div>
+        <div class="action-hint" id="action-hint" role="status" aria-label="Volunteer action hint">
+        </div>
+        <div id="gate-info" style="display:none;margin-top:8px;">
+          <span class="gate-highlight" id="gate-info-text" aria-label="Relevant gate information"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Alert banners (conditionally shown) -->
+    <div id="emergency-banner" class="banner banner-emergency" style="display:none;" role="alert" aria-live="assertive">
+      <span>🚨</span>
+      <span><strong>EMERGENCY</strong> — Call ext 2112 NOW. Stay with the fan. Clear the area.</span>
+      <span class="banner-ext">📞 2112</span>
+    </div>
+    <div id="accessibility-banner" class="banner banner-accessibility" style="display:none;" role="status">
+      <span>♿</span>
+      <span>Switch to the <strong>Accessible</strong> tab for full step-free routing assistance.</span>
+    </div>
+    <div id="supervisor-banner" class="banner banner-supervisor" style="display:none;" role="alert">
+      <span>⚡</span>
+      <span>Get your supervisor — <strong>ext 2000</strong></span>
+      <span class="banner-ext" style="font-size:18px;">📞 2000</span>
+    </div>
+  </div>
+
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- TAB 2: CROWD INTEL                                         -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section class="tab-panel" id="tab-crowd" role="tabpanel" aria-labelledby="tab-btn-crowd">
+
+  <div class="card">
+    <h2 class="section-heading">Live Crowd Intelligence</h2>
+    <p class="section-sub">AI reasoning over real-time gate density data — beyond detection to decision.</p>
+
+    <div class="crowd-header-row">
+      <button class="btn-primary" id="crowd-analyze-btn"
+        aria-label="Run AI crowd analysis now">
+        Analyze Now
+      </button>
+      <div class="countdown-badge" id="crowd-countdown" aria-live="polite" role="timer">
+        Auto-refresh in: 60s
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div class="loading-state" id="crowd-loading" role="status" aria-live="polite">
+      <span class="spinner" aria-hidden="true">⚽</span>
+      <span>Analyzing crowd data...</span>
+    </div>
+
+    <!-- Gate cards -->
+    <div class="gate-cards-grid" id="gate-cards-grid" role="list" aria-label="Gate capacity status">
+    </div>
+
+    <!-- AI Reasoning -->
+    <div class="reasoning-panel" id="reasoning-panel" style="display:none;" aria-label="AI crowd analysis result">
+      <h3>🤖 AI Decision</h3>
+      <div id="risk-badge" class="risk-badge risk-Unknown" role="status">Unknown</div>
+      <p class="reasoning-text" id="reasoning-text"></p>
+      <div class="decision-text" id="decision-text"></div>
+
+      <!-- Redirect arrow -->
+      <div class="redirect-arrow" id="redirect-arrow" style="display:none;" aria-label="Crowd redirect recommendation">
+        <span class="redirect-from" id="redirect-from"></span>
+        <span class="arrow-icon" aria-hidden="true">➔</span>
+        <span class="redirect-to" id="redirect-to"></span>
+        <span style="color:#8b949e;font-size:13px;margin-left:auto;" id="redirect-wait"></span>
+      </div>
+
+      <!-- Alert language tabs -->
+      <p style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#8b949e;margin-bottom:6px;">
+        Fan Alert — Select Language:
+      </p>
+      <div class="lang-tabs" role="tablist" aria-label="Alert message language">
+        <button class="lang-tab-btn active" data-lang="en" role="tab" aria-selected="true"
+          aria-label="Show alert in English">EN 🇺🇸</button>
+        <button class="lang-tab-btn" data-lang="es" role="tab" aria-selected="false"
+          aria-label="Show alert in Spanish">ES 🇪🇸</button>
+        <button class="lang-tab-btn" data-lang="pt" role="tab" aria-selected="false"
+          aria-label="Show alert in Portuguese">PT 🇧🇷</button>
+      </div>
+      <div class="alert-text" id="alert-text" aria-live="polite"></div>
+
+      <div class="instruction-box" id="instruction-box" role="status" aria-live="polite"></div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- TAB 3: ACCESSIBLE                                          -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section class="tab-panel" id="tab-access" role="tabpanel" aria-labelledby="tab-btn-access">
+
+  <div class="card">
+    <h2 class="section-heading">Accessibility Assistant</h2>
+    <p class="section-sub">Help fans with special needs — in their language. Step-free routes, always.</p>
+
+    <!-- Need type selector -->
+    <p class="gate-label mb-12">What does the fan need?</p>
+    <div class="access-type-grid" role="group" aria-label="Select accessibility need type">
+      <button class="access-type-btn" data-type="Wheelchair" aria-pressed="false"
+        aria-label="Wheelchair and mobility assistance">
+        <span class="icon" aria-hidden="true">♿</span>
+        <span class="label">Wheelchair</span>
+      </button>
+      <button class="access-type-btn" data-type="Deaf/HoH" aria-pressed="false"
+        aria-label="Deaf or hard of hearing assistance">
+        <span class="icon" aria-hidden="true">👂</span>
+        <span class="label">Deaf / HoH</span>
+      </button>
+      <button class="access-type-btn" data-type="Vision" aria-pressed="false"
+        aria-label="Visual impairment assistance">
+        <span class="icon" aria-hidden="true">👁</span>
+        <span class="label">Vision</span>
+      </button>
+      <button class="access-type-btn" data-type="Family" aria-pressed="false"
+        aria-label="Family with stroller or young children">
+        <span class="icon" aria-hidden="true">👨‍👩‍👧</span>
+        <span class="label">Family</span>
+      </button>
+      <button class="access-type-btn" data-type="Medical" aria-pressed="false"
+        aria-label="Medical assistance needed">
+        <span class="icon" aria-hidden="true">🏥</span>
+        <span class="label">Medical</span>
+      </button>
+      <button class="access-type-btn" data-type="Nursing" aria-pressed="false"
+        aria-label="Nursing room needed">
+        <span class="icon" aria-hidden="true">🤱</span>
+        <span class="label">Nursing</span>
+      </button>
+    </div>
+
+    <label for="access-query-input" class="gate-label" style="display:block;margin-bottom:8px;">
+      What did the fan say? (any language):
+    </label>
+    <textarea
+      id="access-query-input"
+      rows="3"
+      placeholder="Type what the fan said in any language — e.g. 'Necesito silla de ruedas'"
+      aria-label="Fan's accessibility request in any language"
+    ></textarea>
+
+    <div class="row-flex mt-12">
+      <button class="btn-primary" id="access-submit-btn"
+        aria-label="Get accessible route from AI">
+        Get Accessible Route →
+      </button>
+    </div>
+
+    <!-- Loading -->
+    <div class="loading-state" id="access-loading" role="status" aria-live="polite">
+      <span class="spinner" aria-hidden="true">⚽</span>
+      <span>Finding accessible route...</span>
+    </div>
+  </div>
+
+  <!-- Access response -->
+  <div id="access-response-card" class="card" aria-live="polite">
+    <div class="access-type-badge" id="access-type-badge">♿ Wheelchair</div>
+
+    <div class="response-panels">
+      <!-- LEFT: Fan -->
+      <div class="panel-fan">
+        <div class="panel-label">📢 Show this to the fan</div>
+        <div class="lang-badge" id="access-lang-badge">
+          <span id="access-lang-flag" aria-hidden="true">🌐</span>
+          <span id="access-lang-name">Language detected</span>
+        </div>
+        <div class="fan-response-text" id="access-fan-instructions"
+          style="font-size:16px;white-space:pre-line;" aria-label="Step-by-step instructions in fan's language">
+        </div>
+      </div>
+      <!-- RIGHT: Volunteer -->
+      <div class="panel-volunteer">
+        <div class="panel-label">🎧 Your Guide</div>
+        <div id="escort-badge-wrap"></div>
+        <div class="volunteer-summary" id="access-route-description"></div>
+
+        <div class="walk-time" id="walk-time" aria-label="Walking time estimate">
+          <span>🚶</span>
+          <div class="walk-dots" id="walk-dots" aria-hidden="true"></div>
+          <span id="walk-time-text" style="font-weight:600;"></span>
+        </div>
+
+        <div id="elevator-info" style="display:none;margin-top:8px;">
+          <div style="color:var(--gold);font-size:13px;font-weight:700;margin-bottom:4px;">🛗 Elevator Required:</div>
+          <div style="color:#cdd9e5;font-size:13px;" id="elevator-location-text"></div>
+        </div>
+
+        <div style="margin-top:10px;">
+          <div style="color:#8b949e;font-size:12px;font-weight:700;text-transform:uppercase;margin-bottom:4px;">Nearest Facility:</div>
+          <div style="color:var(--gold);font-size:14px;font-weight:700;" id="nearest-facility"></div>
+        </div>
+
+        <div id="additional-support-wrap" style="display:none;margin-top:10px;">
+          <div style="color:#86efac;font-size:13px;" id="additional-support-text"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- TAB 4: MY BRIEFING                                         -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section class="tab-panel" id="tab-brief" role="tabpanel" aria-labelledby="tab-btn-brief">
+
+  <div class="card">
+    <h2 class="section-heading">Shift Briefing</h2>
+    <p class="section-sub">AI-generated for your gate and today's match. Know what's coming before it arrives.</p>
+
+    <div class="briefing-header">
+      <button class="btn-primary" id="briefing-refresh-btn"
+        aria-label="Refresh AI-generated briefing">
+        Refresh Briefing
+      </button>
+      <span class="briefing-updated" id="briefing-updated" aria-live="polite">Loading...</span>
+    </div>
+
+    <div class="loading-state" id="brief-loading" role="status" aria-live="polite">
+      <span class="spinner" aria-hidden="true">⚽</span>
+      <span>Generating your briefing...</span>
+    </div>
+  </div>
+
+  <!-- Briefing document -->
+  <div id="briefing-doc" class="briefing-doc" style="display:none;" aria-label="Volunteer shift briefing">
+    <div class="briefing-doc-header">
+      <span>📋 SHIFT BRIEFING — <span id="brief-gate-name">Gate C — South</span></span>
+      <span id="brief-match-name" style="font-size:13px;opacity:0.85;"></span>
+    </div>
+    <div class="briefing-section bs-gate-status">
+      <div class="briefing-section-label">Gate Status</div>
+      <div id="brief-gate-status"></div>
+    </div>
+    <div class="briefing-section bs-crowd-forecast">
+      <div class="briefing-section-label">Crowd Forecast</div>
+      <div id="brief-crowd-forecast"></div>
+    </div>
+    <div class="briefing-section bs-languages">
+      <div class="briefing-section-label">Languages Today</div>
+      <div id="brief-languages"></div>
+    </div>
+    <div class="briefing-section bs-questions">
+      <div class="briefing-section-label">Top 3 Questions You Will Get</div>
+      <div id="brief-questions"></div>
+    </div>
+    <div class="briefing-section">
+      <div class="briefing-section-label" style="color:#78350f;">Watch Out For</div>
+      <div class="warning-box" id="brief-watchout"></div>
+    </div>
+    <div class="briefing-section">
+      <div class="briefing-section-label" style="color:#7f1d1d;">Escalate If</div>
+      <div class="danger-box" id="brief-escalate"></div>
+    </div>
+  </div>
+
+  <!-- Quick Reference Accordion -->
+  <div class="accordion" aria-label="Quick reference information">
+    <div class="accordion-item">
+      <button class="accordion-header" aria-expanded="false"
+        aria-controls="acc-emergencies" id="acc-btn-emergencies">
+        🚨 Emergencies
+        <span class="accordion-chevron" aria-hidden="true">▼</span>
+      </button>
+      <div class="accordion-body" id="acc-emergencies" role="region" aria-labelledby="acc-btn-emergencies">
+        <ul>
+          <li><strong>Medical emergency:</strong> Call ext <strong>2112</strong>. Do not move person. Clear 10ft radius.</li>
+          <li><strong>Lost child:</strong> Call ext <strong>2100</strong>. Take to Family Zone Section 140.</li>
+          <li><strong>Security threat:</strong> Call ext <strong>911</strong>. Do not engage. Move fans away.</li>
+          <li><strong>Fire alarm:</strong> Use color-coded exits. NO elevators. Do not run.</li>
+          <li><strong>General supervisor:</strong> ext <strong>2000</strong></li>
+        </ul>
+      </div>
+    </div>
+    <div class="accordion-item">
+      <button class="accordion-header" aria-expanded="false"
+        aria-controls="acc-accessibility" id="acc-btn-accessibility">
+        ♿ Accessibility
+        <span class="accordion-chevron" aria-hidden="true">▼</span>
+      </button>
+      <div class="accordion-body" id="acc-accessibility" role="region" aria-labelledby="acc-btn-accessibility">
+        <ul>
+          <li><strong>Wheelchair:</strong> Gate A, B, D only — Gate C has NO wheelchair access (stairs only)</li>
+          <li><strong>Elevators:</strong> Gate A lobby (2), Gate B lobby (2), Gate D lobby (3)</li>
+          <li><strong>Accessible seating:</strong> Sections 101, 102, 201, 202, 301, 302</li>
+          <li><strong>Sign language interpreters:</strong> Gate B desk & Accessibility Services Desk</li>
+          <li><strong>Vibrating wristbands (Deaf/HoH):</strong> Free at Accessibility Services Desk</li>
+          <li><strong>Audio description (Vision):</strong> 97.5FM stadium frequency via app</li>
+          <li><strong>Guide dog relief area:</strong> Section 105 outer concourse</li>
+        </ul>
+      </div>
+    </div>
+    <div class="accordion-item">
+      <button class="accordion-header" aria-expanded="false"
+        aria-controls="acc-food" id="acc-btn-food">
+        🍔 Food Filters
+        <span class="accordion-chevron" aria-hidden="true">▼</span>
+      </button>
+      <div class="accordion-body" id="acc-food" role="region" aria-labelledby="acc-btn-food">
+        <ul>
+          <li><strong>Halal:</strong> Halal Kitchen — Section 205 (also vegetarian, vegan)</li>
+          <li><strong>Vegan:</strong> Vegan Paradise — Section 135 (also gluten-free)</li>
+          <li><strong>All options (halal, vegan, GF):</strong> International Food Hall — Section 220</li>
+          <li><strong>Fastest option:</strong> Grab & Go Kiosks — Sections 105, 115, 125, 205, 215, 305 (~2 min wait)</li>
+          <li><strong>Prayer rooms:</strong> Gate B Level 2 (cap 20), Gate D Level 3 (cap 15)</li>
+        </ul>
+      </div>
+    </div>
+    <div class="accordion-item">
+      <button class="accordion-header" aria-expanded="false"
+        aria-controls="acc-transport" id="acc-btn-transport">
+        🚌 Transport
+        <span class="accordion-chevron" aria-hidden="true">▼</span>
+      </button>
+      <div class="accordion-body" id="acc-transport" role="region" aria-labelledby="acc-btn-transport">
+        <ul>
+          <li><strong>Metro:</strong> Meadowlands Station (NJ Transit) — every 10 min on match days</li>
+          <li><strong>Gate B:</strong> 4 min walk straight from station</li>
+          <li><strong>Gate A:</strong> 8 min — turn left from station</li>
+          <li><strong>Gate C:</strong> 12 min — turn right from station</li>
+          <li><strong>Gate D:</strong> Bus route 355, or 15 min shuttle</li>
+          <li><strong>Rideshare:</strong> Lot H, Gate D side — pre-book before leaving seat</li>
+          <li><strong>Last train:</strong> 2 hours after final whistle</li>
+          <li><strong>Accessible buses:</strong> All routes have low-floor buses</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ─── MAIN SCRIPT ─────────────────────────────────────────── -->
+<script>
+  'use strict';
+
+  // ── CONFIG ────────────────────────────────────────────────────
+  const BACKEND = "http://localhost:8080";
+
+  // ── STATE ─────────────────────────────────────────────────────
+  let activeGate = 'gate_c';
+  let activeMatch = 'WC01';
+  let currentAlertMessages = {};
+  let crowdCountdownTimer = null;
+  let crowdCountdownSeconds = 60;
+  let briefingLoadedAt = null;
+  let _debounceTimer = null;
+
+  // Language metadata for speech synthesis
+  const LANG_META = {
+    en: { name: 'English',    flag: '🇺🇸', bcp47: 'en-US' },
+    es: { name: 'Spanish',    flag: '🇪🇸', bcp47: 'es-ES' },
+    pt: { name: 'Portuguese', flag: '🇧🇷', bcp47: 'pt-BR' },
+    fr: { name: 'French',     flag: '🇫🇷', bcp47: 'fr-FR' },
+    ar: { name: 'Arabic',     flag: '🇲🇦', bcp47: 'ar-SA' },
+    hi: { name: 'Hindi',      flag: '🇮🇳', bcp47: 'hi-IN' },
+    de: { name: 'German',     flag: '🇩🇪', bcp47: 'de-DE' },
+    ja: { name: 'Japanese',   flag: '🇯🇵', bcp47: 'ja-JP' },
+  };
+
+  const STATUS_CLASS = { available: 'badge-available', moderate: 'badge-moderate', high: 'badge-high', critical: 'badge-critical' };
+  const FILL_CLASS   = (d) => d >= 90 ? 'fill-red' : d >= 80 ? 'fill-orange' : d >= 60 ? 'fill-yellow' : 'fill-green';
+  const CARD_CLASS   = (d) => d >= 90 ? 'critical' : d >= 80 ? 'high' : d >= 60 ? 'moderate' : 'available';
+
+  // ── LIVE CLOCK ────────────────────────────────────────────────
+  function updateClock() {
+    const now = new Date();
+    document.getElementById('live-clock').textContent =
+      now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  }
+  updateClock();
+  setInterval(updateClock, 1000);
+
+  // ── GATE SELECTOR ─────────────────────────────────────────────
+  document.querySelectorAll('.gate-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      activeGate = btn.dataset.gate;
+      document.querySelectorAll('.gate-btn').forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-checked', 'false');
+      });
+      btn.classList.add('active');
+      btn.setAttribute('aria-checked', 'true');
+    });
+  });
+  // Set Gate C as default active
+  const defaultGateBtn = document.getElementById('btn-gate-c');
+  defaultGateBtn.classList.add('active');
+  defaultGateBtn.setAttribute('aria-checked', 'true');
+
+  // ── MATCH SELECTOR ────────────────────────────────────────────
+  document.querySelectorAll('.match-pill').forEach(btn => {
+    btn.addEventListener('click', () => {
+      activeMatch = btn.dataset.match;
+      document.querySelectorAll('.match-pill').forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-pressed', 'false');
+      });
+      btn.classList.add('active');
+      btn.setAttribute('aria-pressed', 'true');
+    });
+  });
+  const defaultMatchBtn = document.getElementById('btn-match-wc01');
+  defaultMatchBtn.classList.add('active');
+  defaultMatchBtn.setAttribute('aria-pressed', 'true');
+
+  // ── TAB SWITCHING ─────────────────────────────────────────────
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const targetTab = btn.dataset.tab;
+      document.querySelectorAll('.tab-btn').forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-selected', 'false');
+      });
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      btn.setAttribute('aria-selected', 'true');
+      document.getElementById('tab-' + targetTab).classList.add('active');
+
+      // Auto-load briefing when tab opens
+      if (targetTab === 'brief' && !briefingLoadedAt) {
+        loadBriefing();
+      }
+    });
+  });
+
+  // ── DEBOUNCE ──────────────────────────────────────────────────
+  function debounce(fn, delay) {
+    return function(...args) {
+      clearTimeout(_debounceTimer);
+      _debounceTimer = setTimeout(() => fn.apply(this, args), delay);
+    };
+  }
+
+  // ── API HELPER ────────────────────────────────────────────────
+  async function apiFetch(path, options = {}) {
+    const url = BACKEND.replace(/\/$/, '') + path;
+    const res = await fetch(url, {
+      headers: { 'Content-Type': 'application/json' },
+      ...options,
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || `HTTP ${res.status}`);
+    }
+    return res.json();
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // TAB 1: ASK FOR FAN
+  // ═══════════════════════════════════════════════════════════════
+
+  let currentLangCode = 'en';
+  let currentFanText  = '';
+
+  // Demo scenarios
+  document.querySelectorAll('.demo-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.getElementById('fan-query-input').value = btn.dataset.query;
+      document.getElementById('fan-query-input').focus();
+    });
+  });
+
+  document.getElementById('ask-clear-btn').addEventListener('click', () => {
+    document.getElementById('fan-query-input').value = '';
+    document.getElementById('response-card').classList.remove('visible');
+    document.getElementById('ask-error').style.display = 'none';
+    document.getElementById('fan-query-input').focus();
+  });
+
+  const handleAskSubmit = debounce(async () => {
+    const query = document.getElementById('fan-query-input').value.trim();
+    if (!query) {
+      document.getElementById('fan-query-input').focus();
+      return;
+    }
+
+    const submitBtn = document.getElementById('ask-submit-btn');
+    const loading   = document.getElementById('ask-loading');
+    const errorEl   = document.getElementById('ask-error');
+    const responseCard = document.getElementById('response-card');
+
+    submitBtn.disabled = true;
+    loading.classList.add('visible');
+    errorEl.style.display = 'none';
+    responseCard.classList.remove('visible');
+
+    try {
+      const data = await apiFetch('/ask', {
+        method: 'POST',
+        body: JSON.stringify({
+          fan_query: query,
+          volunteer_gate: activeGate,
+          match_id: activeMatch,
+        }),
+      });
+      renderAskResponse(data);
+    } catch (err) {
+      errorEl.style.display = 'flex';
+      document.getElementById('ask-error-msg').textContent =
+        'AI response failed: ' + (err.message || 'Please check backend URL and API key.');
+    } finally {
+      submitBtn.disabled = false;
+      loading.classList.remove('visible');
+    }
+  }, 300);
+
+  document.getElementById('ask-submit-btn').addEventListener('click', handleAskSubmit);
+  document.getElementById('fan-query-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) handleAskSubmit();
+  });
+
+  function renderAskResponse(data) {
+    const langCode = (data.language_code || 'en').toLowerCase().split('-')[0];
+    const meta     = LANG_META[langCode] || { name: data.language_detected || 'Detected', flag: '🌐', bcp47: langCode };
+    currentLangCode = langCode;
+    currentFanText  = data.fan_response || '';
+
+    // Lang badge
+    document.getElementById('lang-flag').textContent = meta.flag;
+    document.getElementById('lang-name').textContent = meta.name + ' detected';
+    document.getElementById('lang-badge').setAttribute('aria-label', meta.name + ' detected');
+
+    // Fan response
+    document.getElementById('fan-response-text').textContent = data.fan_response || '';
+    document.getElementById('fan-response-text').setAttribute('lang', meta.bcp47 || langCode);
+
+    // Volunteer summary
+    document.getElementById('volunteer-summary').textContent = data.volunteer_summary || '';
+    document.getElementById('action-hint').textContent = data.volunteer_action_hint || '';
+
+    // Gate info
+    const gateInfo = document.getElementById('gate-info');
+    if (data.relevant_gate) {
+      gateInfo.style.display = 'block';
+      document.getElementById('gate-info-text').textContent = '📍 ' + data.relevant_gate;
+    } else {
+      gateInfo.style.display = 'none';
+    }
+
+    // Alert banners
+    document.getElementById('emergency-banner').style.display    = data.is_emergency     ? 'flex' : 'none';
+    document.getElementById('accessibility-banner').style.display = data.accessibility_flag ? 'flex' : 'none';
+    document.getElementById('supervisor-banner').style.display   = data.requires_supervisor ? 'flex' : 'none';
+
+    document.getElementById('response-card').classList.add('visible');
+    document.getElementById('response-card').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  // Read Aloud via SpeechSynthesis
+  document.getElementById('read-aloud-btn').addEventListener('click', () => {
+    if (!currentFanText || !window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(currentFanText);
+    const meta  = LANG_META[currentLangCode];
+    utter.lang  = meta ? meta.bcp47 : 'en-US';
+    utter.rate  = 0.9;
+    window.speechSynthesis.speak(utter);
+  });
+
+  // ═══════════════════════════════════════════════════════════════
+  // TAB 2: CROWD INTEL
+  // ═══════════════════════════════════════════════════════════════
+
+  function startCrowdCountdown() {
+    clearInterval(crowdCountdownTimer);
+    crowdCountdownSeconds = 60;
+    const el = document.getElementById('crowd-countdown');
+    crowdCountdownTimer = setInterval(() => {
+      crowdCountdownSeconds -= 1;
+      el.textContent = 'Auto-refresh in: ' + crowdCountdownSeconds + 's';
+      if (crowdCountdownSeconds <= 0) {
+        clearInterval(crowdCountdownTimer);
+        loadCrowdAnalysis();
+      }
+    }, 1000);
+  }
+
+  async function loadCrowdAnalysis() {
+    const btn     = document.getElementById('crowd-analyze-btn');
+    const loading = document.getElementById('crowd-loading');
+    const panel   = document.getElementById('reasoning-panel');
+
+    btn.disabled = true;
+    loading.classList.add('visible');
+    panel.style.display = 'none';
+
+    try {
+      const data = await apiFetch('/crowd', {
+        method: 'POST',
+        body: JSON.stringify({ match_id: activeMatch }),
+      });
+      renderCrowdCards(data.gates_live || []);
+      renderCrowdAnalysis(data.analysis || {});
+      panel.style.display = 'block';
+      startCrowdCountdown();
+    } catch (err) {
+      document.getElementById('crowd-countdown').textContent = 'Error: ' + (err.message || 'Failed');
+    } finally {
+      btn.disabled = false;
+      loading.classList.remove('visible');
+    }
+  }
+
+  document.getElementById('crowd-analyze-btn').addEventListener('click', loadCrowdAnalysis);
+
+  function renderCrowdCards(gates) {
+    const grid = document.getElementById('gate-cards-grid');
+    grid.innerHTML = '';
+    gates.forEach(gate => {
+      const d    = gate.density_percent || 0;
+      const card = document.createElement('div');
+      card.className = 'gate-card ' + CARD_CLASS(d);
+      card.setAttribute('role', 'listitem');
+      card.setAttribute('aria-label', gate.name + ', ' + d + '% capacity, status: ' + (gate.status || ''));
+      card.innerHTML = `
+        <div class="gate-card-name">
+          <span>${escHtml(gate.name)}</span>
+          ${gate.accessible ? '<span class="accessible-icon" title="Wheelchair accessible" aria-label="Wheelchair accessible">♿</span>' : ''}
+        </div>
+        <div class="capacity-bar-wrap" role="progressbar" aria-valuenow="${d}" aria-valuemin="0" aria-valuemax="100" aria-label="${d}% capacity">
+          <div class="capacity-bar-fill ${FILL_CLASS(d)}" style="width:${Math.min(d,100)}%"></div>
+        </div>
+        <div class="gate-meta">
+          <span>${gate.current_occupancy?.toLocaleString()} / ${gate.capacity?.toLocaleString()}</span>
+          <span>~${gate.wait_minutes} min wait</span>
+        </div>
+        <div>
+          <span class="status-badge ${STATUS_CLASS[gate.status] || 'badge-available'}">${(gate.status || 'available').toUpperCase()}</span>
+          <span style="font-size:13px;color:var(--text-muted);margin-left:8px;">${d}%</span>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  function renderCrowdAnalysis(analysis) {
+    const riskEl = document.getElementById('risk-badge');
+    const risk   = analysis.overall_risk || 'Unknown';
+    riskEl.textContent = risk;
+    riskEl.className = 'risk-badge risk-' + risk;
+
+    document.getElementById('reasoning-text').textContent = analysis.reasoning || '';
+    document.getElementById('decision-text').textContent  = analysis.decision  || '';
+
+    // Redirect arrow
+    const arrow = document.getElementById('redirect-arrow');
+    if (analysis.redirect_from && analysis.redirect_to) {
+      arrow.style.display = 'flex';
+      document.getElementById('redirect-from').textContent = '⛔ ' + analysis.redirect_from;
+      document.getElementById('redirect-to').textContent   = '✅ ' + analysis.redirect_to;
+      document.getElementById('redirect-wait').textContent =
+        analysis.estimated_wait_if_redirected_minutes != null
+          ? '~' + analysis.estimated_wait_if_redirected_minutes + ' min after redirect'
+          : '';
+    } else {
+      arrow.style.display = 'none';
+    }
+
+    // Alert messages
+    currentAlertMessages = analysis.alert_message || { en: '', es: '', pt: '' };
+    document.getElementById('alert-text').textContent = currentAlertMessages['en'] || '';
+    document.querySelectorAll('.lang-tab-btn').forEach(b => {
+      b.classList.remove('active');
+      b.setAttribute('aria-selected', 'false');
+    });
+    document.querySelector('.lang-tab-btn[data-lang="en"]').classList.add('active');
+    document.querySelector('.lang-tab-btn[data-lang="en"]').setAttribute('aria-selected', 'true');
+
+    document.getElementById('instruction-box').textContent = analysis.volunteer_instruction || '';
+  }
+
+  // Language tab switching for alerts
+  document.querySelectorAll('.lang-tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.lang-tab-btn').forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-selected', 'false');
+      });
+      btn.classList.add('active');
+      btn.setAttribute('aria-selected', 'true');
+      const lang = btn.dataset.lang;
+      document.getElementById('alert-text').textContent = currentAlertMessages[lang] || '';
+    });
+  });
+
+  // ═══════════════════════════════════════════════════════════════
+  // TAB 3: ACCESSIBLE
+  // ═══════════════════════════════════════════════════════════════
+
+  let selectedAccessType = '';
+
+  document.querySelectorAll('.access-type-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      selectedAccessType = btn.dataset.type;
+      document.querySelectorAll('.access-type-btn').forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-pressed', 'false');
+      });
+      btn.classList.add('active');
+      btn.setAttribute('aria-pressed', 'true');
+
+      // Pre-fill query hint
+      const hints = {
+        'Wheelchair':  'I need wheelchair access',
+        'Deaf/HoH':    'I am deaf — where are the caption screens?',
+        'Vision':      'I have visual impairment — need assistance',
+        'Family':      'I have a stroller and need the family zone',
+        'Medical':     'I need medical assistance urgently',
+        'Nursing':     'I need a nursing room for my baby',
+      };
+      const ta = document.getElementById('access-query-input');
+      if (!ta.value.trim()) ta.value = hints[selectedAccessType] || '';
+    });
+  });
+
+  document.getElementById('access-submit-btn').addEventListener('click', async () => {
+    const query = document.getElementById('access-query-input').value.trim();
+    if (!query) {
+      document.getElementById('access-query-input').focus();
+      return;
+    }
+
+    const btn       = document.getElementById('access-submit-btn');
+    const loading   = document.getElementById('access-loading');
+    const respCard  = document.getElementById('access-response-card');
+
+    btn.disabled = true;
+    loading.classList.add('visible');
+    respCard.classList.remove('visible');
+
+    const gateNames = {
+      gate_a: 'Gate A — North',
+      gate_b: 'Gate B — East',
+      gate_c: 'Gate C — South',
+      gate_d: 'Gate D — West',
+    };
+
+    try {
+      const data = await apiFetch('/accessibility', {
+        method: 'POST',
+        body: JSON.stringify({
+          fan_query: query,
+          current_location: gateNames[activeGate] || 'Gate A',
+        }),
+      });
+      renderAccessResponse(data);
+    } catch (err) {
+      alert('Accessibility route error: ' + (err.message || 'Please try again.'));
+    } finally {
+      btn.disabled = false;
+      loading.classList.remove('visible');
+    }
+  });
+
+  function renderAccessResponse(data) {
+    const langCode = (data.language_detected || 'en').toLowerCase().split(/[\s-]/)[0];
+    const meta     = LANG_META[langCode] || { name: data.language_detected || 'Detected', flag: '🌐' };
+
+    // Type badge
+    const typeIcons = {
+      'Wheelchair': '♿', 'Deaf/HoH': '👂', 'Visual Impairment': '👁',
+      'Family': '👨‍👩‍👧', 'Medical': '🏥', 'Nursing': '🤱', 'General Assistance': '🆘'
+    };
+    const typeIcon = typeIcons[data.accessibility_type] || '♿';
+    document.getElementById('access-type-badge').textContent =
+      typeIcon + ' ' + (data.accessibility_type || 'Accessibility');
+
+    // Lang
+    document.getElementById('access-lang-flag').textContent = meta.flag;
+    document.getElementById('access-lang-name').textContent = meta.name + ' detected';
+
+    // Fan instructions
+    document.getElementById('access-fan-instructions').textContent = data.fan_instructions || '';
+
+    // Escort badge
+    const escortWrap = document.getElementById('escort-badge-wrap');
+    escortWrap.innerHTML = data.volunteer_escort_needed
+      ? '<div class="escort-badge">⚠️ Stay with this fan</div>'
+      : '';
+
+    // Route
+    document.getElementById('access-route-description').textContent = data.route_description || '';
+
+    // Walk time dots
+    const wt = data.walking_time_minutes || 5;
+    document.getElementById('walk-time-text').textContent = wt + ' minute' + (wt !== 1 ? 's' : '') + ' walk';
+    const dots = document.getElementById('walk-dots');
+    dots.innerHTML = '';
+    const numDots = Math.min(Math.ceil(wt / 2), 10);
+    for (let i = 0; i < numDots; i++) {
+      const d = document.createElement('div');
+      d.className = 'walk-dot';
+      d.style.opacity = i < numDots * 0.7 ? '1' : '0.3';
+      dots.appendChild(d);
+    }
+
+    // Elevator
+    const elevatorInfo = document.getElementById('elevator-info');
+    if (data.elevator_required && data.elevator_location) {
+      elevatorInfo.style.display = 'block';
+      document.getElementById('elevator-location-text').textContent = data.elevator_location;
+    } else {
+      elevatorInfo.style.display = 'none';
+    }
+
+    // Nearest facility
+    document.getElementById('nearest-facility').textContent = data.nearest_facility || '';
+
+    // Additional support
+    const supWrap = document.getElementById('additional-support-wrap');
+    if (data.additional_support) {
+      supWrap.style.display = 'block';
+      document.getElementById('additional-support-text').textContent = 'ℹ️ ' + data.additional_support;
+    } else {
+      supWrap.style.display = 'none';
+    }
+
+    document.getElementById('access-response-card').classList.add('visible');
+    document.getElementById('access-response-card').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // TAB 4: BRIEFING
+  // ═══════════════════════════════════════════════════════════════
+
+  async function loadBriefing() {
+    const loading = document.getElementById('brief-loading');
+    const doc     = document.getElementById('briefing-doc');
+    const updated = document.getElementById('briefing-updated');
+
+    loading.classList.add('visible');
+    doc.style.display = 'none';
+    updated.textContent = 'Generating...';
+
+    const gateId  = activeGate;
+    const matchId = activeMatch;
+
+    try {
+      const data = await apiFetch('/briefing/' + gateId + '/' + matchId);
+      briefingLoadedAt = new Date();
+      renderBriefing(data);
+      doc.style.display = 'block';
+      updated.textContent = 'Last updated: just now';
+      startBriefingAgeTimer();
+    } catch (err) {
+      updated.textContent = 'Error: ' + (err.message || 'Failed to load briefing');
+    } finally {
+      loading.classList.remove('visible');
+    }
+  }
+
+  document.getElementById('briefing-refresh-btn').addEventListener('click', loadBriefing);
+
+  function renderBriefing(data) {
+    const gate  = data.gate  || {};
+    const match = data.match || {};
+    const brief = data.briefing || {};
+
+    document.getElementById('brief-gate-name').textContent  = gate.name  || 'Your Gate';
+    document.getElementById('brief-match-name').textContent = match.teams || '';
+
+    document.getElementById('brief-gate-status').textContent  = brief.gate_status     || 'Checking gate status...';
+    document.getElementById('brief-crowd-forecast').textContent = brief.crowd_forecast || 'Forecast unavailable.';
+    document.getElementById('brief-languages').textContent    = brief.languages_today  || 'Language data unavailable.';
+    document.getElementById('brief-questions').textContent    = brief.top_3_questions  || '1. Restrooms\n2. Seats\n3. Food';
+    document.getElementById('brief-watchout').textContent     = brief.watch_out_for    || 'Stay alert.';
+    document.getElementById('brief-escalate').textContent     = brief.escalate_if      || 'Gate > 90% capacity. Any emergency. Unresolved issue.';
+  }
+
+  let briefingAgeInterval = null;
+  function startBriefingAgeTimer() {
+    clearInterval(briefingAgeInterval);
+    briefingAgeInterval = setInterval(() => {
+      if (!briefingLoadedAt) return;
+      const mins = Math.floor((Date.now() - briefingLoadedAt) / 60000);
+      document.getElementById('briefing-updated').textContent =
+        mins === 0 ? 'Last updated: just now' : 'Last updated: ' + mins + ' min' + (mins !== 1 ? 's' : '') + ' ago';
+    }, 30000);
+  }
+
+  // ── ACCORDION ─────────────────────────────────────────────────
+  document.querySelectorAll('.accordion-header').forEach(header => {
+    header.addEventListener('click', () => {
+      const bodyId = header.getAttribute('aria-controls');
+      const body   = document.getElementById(bodyId);
+      const isOpen = header.classList.contains('open');
+      header.classList.toggle('open', !isOpen);
+      body.classList.toggle('open', !isOpen);
+      header.setAttribute('aria-expanded', String(!isOpen));
+    });
+  });
+
+  // ── XSS ESCAPE ────────────────────────────────────────────────
+  function escHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  // ── INIT: auto-load crowd on first open ─────────────────────
+  // Crowd tab is lazy-loaded when user clicks it to avoid
+  // burning API calls before user is ready.
+  document.getElementById('tab-btn-crowd').addEventListener('click', () => {
+    if (!document.getElementById('gate-cards-grid').children.length) {
+      setTimeout(loadCrowdAnalysis, 200);
+    }
+  });
+
+</script>
+</body>
+</html>
